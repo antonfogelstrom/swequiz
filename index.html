@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang='en'>
+
+<head>
+    <meta charset='UTF-8'>
+    <meta name='viewport' content='width=device-width, initial-scale=1.0'>
+    <title>Swequiz</title>
+    <style>
+        #word {
+            position: fixed;
+            font-size: 3em;
+            min-width: 2.5em;
+            width: 100%;
+            text-align: center;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            padding: 20px;
+            border: 1px solid #000;
+            background-color: #f0f0f0;
+        }
+
+        #details {
+            position: fixed;
+            font-size: 2em;
+            width: 75%;
+            text-align: center;
+            top: 70%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+    </style>
+</head>
+
+<body>
+    <button id='next-word-btn' onclick='getNextWord()' style='display: none'></button>
+    <button id='show-details-btn' style='display: none' onclick='showDetails()'></button>
+
+    <select name='set' id='set' onchange='switchSet()'>
+        <option value='swedish verbs'>swedish verbs</option>
+    </select>
+
+    <div id='word'>...</div>
+    <div id='details'></div>
+
+    <script>
+        function handleKeyPress(event) {
+            if (event.keyCode === 32 || event.click) {
+                event.preventDefault();
+                clickButton();
+            }
+        }
+
+        function handleClick() {
+            clickButton();
+        }
+
+        function clickButton() {
+            if (currentSet === swedishVerbs && !detailsRevealed && nextWord !== '') {
+                document.getElementById('show-details-btn').click();
+            }
+            else {
+                document.getElementById('next-word-btn').click();
+            }
+        }
+
+        document.getElementById('word').addEventListener('click', handleClick);
+        document.body.addEventListener('keydown', handleKeyPress);
+
+        function shuffleArray(array) {
+            for (let i = array.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [array[i], array[j]] = [array[j], array[i]];
+            }
+            return array;
+        }
+
+        const swedishVerbs = [
+            { id: 1, swedish: "vara", english: "to be", japanese: "いる", conjugations: "vara, är, var, varit" },
+            { id: 2, swedish: "ha", english: "to have", japanese: "持つ", conjugations: "ha, har, hade, haft" },
+            { id: 3, swedish: "göra", english: "to do, to make", japanese: "する, 作る", conjugations: "göra, gör, gjorde, gjort" },
+            { id: 4, swedish: "säga", english: "to say", japanese: "言う", conjugations: "säga, säger, sa(de), sagt" },
+            { id: 5, swedish: "gå", english: "to go", japanese: "行く", conjugations: "gå, går, gick, gått" },
+            { id: 6, swedish: "komma", english: "to come", japanese: "来る", conjugations: "komma, kommer, kom, kommit" },
+            { id: 7, swedish: "ta", english: "to take", japanese: "取る", conjugations: "ta, tar, tog, tagit" },
+            { id: 8, swedish: "ge", english: "to give", japanese: "与える", conjugations: "ge, ger, gav, gett" },
+            { id: 9, swedish: "se", english: "to see", japanese: "見る", conjugations: "se, ser, såg, sett" },
+            { id: 10, swedish: "veta", english: "to know", japanese: "知る", conjugations: "veta, vet, visste, vetat" },
+            { id: 11, swedish: "tro", english: "to believe", japanese: "信じる", conjugations: "tro, tror, trodde, trott" },
+            { id: 12, swedish: "vilja", english: "to want", japanese: "欲しい", conjugations: "vilja, vill, ville, velat" },
+            { id: 13, swedish: "behöva", english: "to need", japanese: "必要とする", conjugations: "behöva, behöver, behövde, behövt" },
+            { id: 14, swedish: "tänka", english: "to think", japanese: "考える", conjugations: "tänka, tänker, tänkte, tänkt" },
+            { id: 15, swedish: "tycka", english: "to think, to feel", japanese: "思う", conjugations: "tycka, tycker, tyckte, tyckt" },
+            { id: 16, swedish: "använda", english: "to use", japanese: "使う", conjugations: "använda, använder, använde, använt" },
+            { id: 17, swedish: "känna", english: "to feel", japanese: "感じる", conjugations: "känna, känner, kände, känt" },
+            { id: 18, swedish: "förstå", english: "to understand", japanese: "理解する", conjugations: "förstå, förstår, förstod, förstått" },
+            { id: 19, swedish: "börja", english: "to start, to begin", japanese: "始める", conjugations: "börja, börjar, började, börjat" },
+            { id: 20, swedish: "sluta", english: "to stop, to end", japanese: "終わる", conjugations: "sluta, slutar, slutade, slutat" },
+            { id: 21, swedish: "prata", english: "to talk", japanese: "話す", conjugations: "prata, pratar, pratade, pratat" },
+            { id: 22, swedish: "fråga", english: "to ask", japanese: "尋ねる", conjugations: "fråga, frågar, frågade, frågat" },
+            { id: 23, swedish: "svara", english: "to answer", japanese: "答える", conjugations: "svara, svarar, svarade, svarat" },
+            { id: 24, swedish: "läsa", english: "to read", japanese: "読む", conjugations: "läsa, läser, läste, läst" },
+            { id: 25, swedish: "skriva", english: "to write", japanese: "書く", conjugations: "skriva, skriver, skrev, skrivit" },
+            { id: 26, swedish: "spela", english: "to play", japanese: "遊ぶ, 演奏する", conjugations: "spela, spelar, spelade, spelat" },
+            { id: 27, swedish: "arbeta", english: "to work", japanese: "働く", conjugations: "arbeta, arbetar, arbetade, arbetat" },
+            { id: 28, swedish: "bo", english: "to live, to reside", japanese: "住む", conjugations: "bo, bor, bodde, bott" },
+            { id: 29, swedish: "köra", english: "to drive", japanese: "運転する", conjugations: "köra, kör, körde, kört" },
+            { id: 30, swedish: "äta", english: "to eat", japanese: "食べる", conjugations: "äta, äter, åt, ätit" },
+            { id: 31, swedish: "dricka", english: "to drink", japanese: "飲む", conjugations: "dricka, dricker, drack, druckit" },
+            { id: 32, swedish: "sova", english: "to sleep", japanese: "寝る", conjugations: "sova, sover, sov, sovit" },
+            { id: 33, swedish: "vakna", english: "to wake up", japanese: "起きる", conjugations: "vakna, vaknar, vaknade, vaknat" },
+            { id: 34, swedish: "springa", english: "to run", japanese: "走る", conjugations: "springa, springer, sprang, sprungit" },
+            { id: 35, swedish: "köpa", english: "to buy", japanese: "買う", conjugations: "köpa, köper, köpte, köpt" },
+            { id: 36, swedish: "sälja", english: "to sell", japanese: "売る", conjugations: "sälja, säljer, sålde, sålt" },
+            { id: 37, swedish: "resa", english: "to travel", japanese: "旅行する", conjugations: "resa, reser, reste, rest" },
+            { id: 38, swedish: "stanna", english: "to stay", japanese: "泊まる", conjugations: "stanna, stannar, stannade, stannat" },
+            { id: 39, swedish: "ringa", english: "to call", japanese: "電話する", conjugations: "ringa, ringer, ringde, ringt" },
+            { id: 40, swedish: "hjälpa", english: "to help", japanese: "助ける", conjugations: "hjälpa, hjälper, hjälpte, hjälpt" },
+            { id: 41, swedish: "leka", english: "to play (with toys, children playing)", japanese: "遊ぶ", conjugations: "leka, leker, lekte, lekt" },
+            { id: 42, swedish: "träna", english: "to train, to exercise", japanese: "訓練する", conjugations: "träna, tränar, tränade, tränat" },
+            { id: 43, swedish: "lyssna", english: "to listen", japanese: "聞く", conjugations: "lyssna, lyssnar, lyssnade, lyssnat" },
+            { id: 44, swedish: "höra", english: "to hear", japanese: "聞こえる", conjugations: "höra, hör, hörde, hört" },
+            { id: 45, swedish: "få", english: "to get, to receive", japanese: "得る", conjugations: "få, får, fick, fått" },
+            { id: 46, swedish: "ge upp", english: "to give up", japanese: "諦める", conjugations: "ge upp, ger upp, gav upp, gett upp" },
+            { id: 47, swedish: "hämta", english: "to fetch, to pick up", japanese: "取りに行く", conjugations: "hämta, hämtar, hämtade, hämtat" },
+            { id: 48, swedish: "lära", english: "to teach, to learn", japanese: "教える, 学ぶ", conjugations: "lära, lär, lärde, lärt" },
+            { id: 49, swedish: "lära sig", english: "to learn", japanese: "学ぶ", conjugations: "lära sig, lär sig, lärde sig, lärt sig" },
+            { id: 50, swedish: "möta", english: "to meet, to encounter", japanese: "会う, 出会う", conjugations: "möta, möter, mötte, mött" },
+            { id: 51, swedish: "skratta", english: "to laugh", japanese: "笑う", conjugations: "skratta, skrattar, skrattade, skrattat" },
+            { id: 52, swedish: "stänga", english: "to close, to shut", japanese: "閉める", conjugations: "stänga, stänger, stängde, stängt" },
+            { id: 53, swedish: "öppna", english: "to open", japanese: "開ける", conjugations: "öppna, öppnar, öppnade, öppnat" },
+            { id: 54, swedish: "välja", english: "to choose", japanese: "選ぶ", conjugations: "välja, väljer, valde, valt" },
+            { id: 55, swedish: "ändra", english: "to change, to modify", japanese: "変える", conjugations: "ändra, ändrar, ändrade, ändrat" },
+            { id: 56, swedish: "förändra", english: "to change, to alter", japanese: "変わる", conjugations: "förändra, förändrar, förändrade, förändrat" },
+            { id: 57, swedish: "förbli", english: "to remain, to stay", japanese: "残る", conjugations: "förbli, förblir, förblev, förblivit" },
+            { id: 58, swedish: "utveckla", english: "to develop, to evolve", japanese: "発展する", conjugations: "utveckla, utvecklar, utvecklade, utvecklat" },
+            { id: 59, swedish: "spara", english: "to save, to spare", japanese: "節約する", conjugations: "spara, sparar, sparade, sparat" },
+            { id: 60, swedish: "resa sig", english: "to rise, to get up", japanese: "立ち上がる", conjugations: "resa sig, reser sig, reste sig, rest sig" },
+            { id: 61, swedish: "hoppa", english: "to jump", japanese: "跳ぶ", conjugations: "hoppa, hoppar, hoppade, hoppat" },
+            { id: 62, swedish: "simma", english: "to swim", japanese: "泳ぐ", conjugations: "simma, simmar, simmade, simmat" },
+            { id: 63, swedish: "röra", english: "to touch, to move", japanese: "動かす", conjugations: "röra, rör, rörde, rört" },
+            { id: 64, swedish: "förklara", english: "to explain", japanese: "説明する", conjugations: "förklara, förklarar, förklarade, förklarat" },
+            { id: 65, swedish: "flytta", english: "to move (residence)", japanese: "引っ越す", conjugations: "flytta, flyttar, flyttade, flyttat" },
+            { id: 66, swedish: "besöka", english: "to visit", japanese: "訪れる", conjugations: "besöka, besöker, besökte, besökt" },
+            { id: 67, swedish: "upptäcka", english: "to discover", japanese: "発見する", conjugations: "upptäcka, upptäcker, upptäckte, upptäckt" },
+            { id: 68, swedish: "bygga", english: "to build", japanese: "建てる", conjugations: "bygga, bygger, byggde, byggt" },
+            { id: 69, swedish: "skapa", english: "to create, to make", japanese: "作る", conjugations: "skapa, skapar, skapade, skapat" },
+            { id: 70, swedish: "anpassa", english: "to adapt, to adjust", japanese: "適応する", conjugations: "anpassa, anpassar, anpassade, anpassat" },
+            { id: 71, swedish: "vandra", english: "to hike, to wander", japanese: "歩く", conjugations: "vandra, vandrar, vandrade, vandrat" },
+            { id: 72, swedish: "drömma", english: "to dream", japanese: "夢見る", conjugations: "drömma, drömmer, drömde, drömt" },
+            { id: 73, swedish: "sova in", english: "to sleep in", japanese: "寝坊する", conjugations: "sova in, sover in, sov in, sovit in" },
+            { id: 74, swedish: "glömma", english: "to forget", japanese: "忘れる", conjugations: "glömma, glömmer, glömde, glömt" },
+            { id: 75, swedish: "minnas", english: "to remember", japanese: "覚えている", conjugations: "minnas, minns, mindes, mints" },
+            { id: 76, swedish: "kasta", english: "to throw, to cast", japanese: "投げる", conjugations: "kasta, kastar, kastade, kastat" },
+            { id: 77, swedish: "fånga", english: "to catch, to capture", japanese: "捕まえる", conjugations: "fånga, fångar, fångade, fångat" },
+            { id: 78, swedish: "slå", english: "to hit, to strike", japanese: "打つ", conjugations: "slå, slår, slog, slagit" },
+            { id: 79, swedish: "klä", english: "to dress, to clothe", japanese: "着る", conjugations: "klä, klär, klädde, klätt" },
+            { id: 80, swedish: "strika", english: "to iron", japanese: "アイロンをかける", conjugations: "strika, stryker, strök, strukit" },
+            { id: 81, swedish: "laga", english: "to cook, to repair", japanese: "料理する, 修理する", conjugations: "laga, lagar, lagade, lagat" },
+            { id: 82, swedish: "steka", english: "to fry", japanese: "揚げる", conjugations: "steka, steker, stekte, stekt" },
+            { id: 83, swedish: "bada", english: "to bathe, to swim", japanese: "入浴する, 泳ぐ", conjugations: "bada, badar, badade, badat" },
+            { id: 84, swedish: "tvätta", english: "to wash", japanese: "洗う", conjugations: "tvätta, tvättar, tvättade, tvättat" },
+            { id: 85, swedish: "borsta", english: "to brush", japanese: "ブラシをかける", conjugations: "borsta, borstar, borstade, borstat" },
+            { id: 86, swedish: "dammsuga", english: "to vacuum", japanese: "掃除機をかける", conjugations: "dammsuga, dammsugar, dammsög, dammsugit" },
+            { id: 87, swedish: "städa", english: "to clean", japanese: "掃除する", conjugations: "städa, städar, städade, städat" },
+            { id: 88, swedish: "gråta", english: "to cry", japanese: "泣く", conjugations: "gråta, gråter, grät, gråtit" },
+            { id: 89, swedish: "skrika", english: "to scream, to shout", japanese: "叫ぶ", conjugations: "skrika, skriker, skrek, skrikit" },
+            { id: 90, swedish: "skrämma", english: "to scare", japanese: "怖がらせる", conjugations: "skrämma, skrämmer, skrämde, skrämt" },
+            { id: 91, swedish: "fira", english: "to celebrate", japanese: "祝う", conjugations: "fira, firar, firade, firat" },
+            { id: 92, swedish: "gratta", english: "to congratulate", japanese: "おめでとうと言う", conjugations: "gratta, grattar, gratulerade, gratulerat" },
+            { id: 93, swedish: "stödja", english: "to support", japanese: "支援する", conjugations: "stödja, stödjer, stödde, stött" },
+            { id: 94, swedish: "förlåta", english: "to forgive", japanese: "許す", conjugations: "förlåta, förlåter, förlät, förlåtit" },
+            { id: 95, swedish: "krama", english: "to hug", japanese: "抱きしめる", conjugations: "krama, kramar, kramade, kramat" },
+            { id: 96, swedish: "kyssa", english: "to kiss", japanese: "キスする", conjugations: "kyssa, kysser, kysste, kysst" },
+            { id: 97, swedish: "älska", english: "to love", japanese: "愛する", conjugations: "älska, älskar, älskade, älskat" },
+            { id: 98, swedish: "hata", english: "to hate", japanese: "嫌う", conjugations: "hata, hatar, hatade, hatat" },
+            { id: 99, swedish: "äta upp", english: "to eat up", japanese: "食べ尽くす", conjugations: "äta upp, äter upp, åt upp, ätit upp" },
+            { id: 100, swedish: "fatta", english: "to understand, to grasp", japanese: "理解する", conjugations: "fatta, fattar, fattade, fattat" },
+        ];
+
+        let currentSet = swedishVerbs;
+
+        let shuffledList = shuffleArray([...currentSet]);
+        let currentWordIndex = 0;
+
+        let nextWord = '';
+        let nextDetails = '';
+        let detailsRevealed = false;
+
+        function getNextWord() {
+            if (currentWordIndex >= shuffledList.length) {
+                shuffledList = shuffleArray([...currentSet]);
+                currentWordIndex = 0;
+            }
+            nextWord = shuffledList[currentWordIndex].swedish;
+            nextDetails = shuffledList[currentWordIndex].japanese.replaceAll(',', ' / ')
+                + "<br>" + shuffledList[currentWordIndex].english.replaceAll(',', ' / ')
+                + "<br>" + shuffledList[currentWordIndex].conjugations.replaceAll(',', ' / ');
+
+            currentWordIndex++;
+            document.getElementById('word').innerHTML = nextWord;
+            document.getElementById('details').innerHTML = '';
+            detailsRevealed = false;
+        }
+
+        function showDetails() {
+            document.getElementById('details').innerHTML = nextDetails;
+            detailsRevealed = true;
+        }
+
+        function switchSet() {
+            let current = document.getElementById('set').value;
+
+            if (current === 'swedish verbs') {
+                currentSet = swedishVerbs;
+            }
+
+            shuffledList = shuffleArray([...currentSet]);
+            document.getElementById('word').innerHTML = '...';
+            document.getElementById('details').innerHTML = '';
+            nextWord = '';
+            nextDetails = '';
+        }
+    </script>
+</body>
+
+</html>
